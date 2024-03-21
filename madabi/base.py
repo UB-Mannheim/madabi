@@ -11,7 +11,7 @@ def fetch_data(offset):
         "query": "(University of Mannheim AND dctypenorm:7 OR dctypenorm:6 OR dctypenorm:5 OR dctypenorm:4 OR dctypenorm:3 OR dctypenorm:2 )",
         "format": "json",
         "hits": 120,
-        "offsett": offset
+        "offset": offset
     }
 
     # Making the request to the BASE API
