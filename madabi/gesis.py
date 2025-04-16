@@ -2,15 +2,22 @@ from sickle import Sickle
 import xml.etree.ElementTree as ET
 from tqdm import tqdm
 import pandas as pd
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+concurrent = True # or True if sequential harvesting is preferred
 
 # Initialize Sickle
 sickle = Sickle('https://dbkapps.gesis.org/dbkoai')
 metadata_prefix = 'oai_dc'
 
 # Function to process a single record
-def process_record(record):
-    root = ET.fromstring(record.raw)
-    return xml_to_dict(root)
+def process_record(identifier_str):
+    try:
+        record = sickle.GetRecord(identifier=identifier_str, metadataPrefix=metadata_prefix)
+        root = ET.fromstring(record.raw)
+        return xml_to_dict(root), None
+    except Exception:
+        return None, identifier_str
 
 # Function to remove namespace
 def get_tag_without_namespace(elem):
@@ -33,17 +40,26 @@ def xml_to_dict(element):
             result[child_tag].append(child_dict)
     return result
 
-
-# Sequential processing of records
-#records = sickle.ListRecords(metadataPrefix=metadata_prefix)
-results = []
-try:
+if concurrent:
+    # Concurrent processing of records
+    results = []
+    skipped = []
+    
+    with ThreadPoolExecutor(max_workers=16) as executor:
+        futures = []
+        for identifier in tqdm(sickle.ListIdentifiers(metadataPrefix=metadata_prefix)):
+            futures.append(executor.submit(process_record, identifier.identifier))
+    
+        for f in tqdm(as_completed(futures), total=len(futures)):
+            result, failed = f.result()
+            if result:
+                results.append(result)
+            elif failed:
+                skipped.append(failed)
+else:
+    # Sequential processing of records
     records = sickle.ListRecords(metadataPrefix=metadata_prefix)
-    for record in tqdm(records):
-        results.append(process_record(record))
-except:
-    print("Error: This metadataPrefix is not supported for some records.")
-#results = [process_record(record) for record in tqdm(records)]
+    results = [process_record(record) for record in tqdm(records)]
 
 # Extract and process all metadata fields, including nameIdentifier
 all_metadata = []
@@ -73,7 +89,6 @@ for entry in results:
                 value = creators_info
             metadata_entry[key] = value
         all_metadata.append(metadata_entry)
-        
 
 def mannheim_key(x):
     return ('Universität Mannheim' in x or
@@ -94,9 +109,23 @@ def get_mannheim(inp):
     else:
         return False
 
-# Convert to DataFrame
-metadata_df = pd.json_normalize(results)#pd.DataFrame.from_dict(results)
-
+metadata_df = pd.json_normalize(results)
 metadata_df['from Mannheim'] = metadata_df['metadata.dc.creator'].apply(lambda x: get_mannheim(x))
+gesis_metadata_df = metadata_df[metadata_df['from Mannheim']]
 
-metadata_df[metadata_df['from Mannheim']].to_csv('../metadata/gesis.csv', index=False)
+def extract_year_from_identifier(identifier):
+    try:
+        record = sickle.GetRecord(identifier=identifier, metadataPrefix='oai_ddi25')
+        root = ET.fromstring(record.raw)
+        for elem in root.iter():
+            if elem.tag.endswith('version') and 'date' in elem.attrib:
+                return elem.attrib['date']
+        return None
+    except Exception as e:
+        print(f"Failed to process {identifier}: {e}")
+        return None
+
+tqdm.pandas()
+gesis_metadata_df['Year'] = gesis_metadata_df['header.identifier'].progress_apply(extract_year_from_identifier)
+gesis_metadata_df['Year'] = gesis_metadata_df['Year'].fillna(gesis_metadata_df['header.datestamp'])
+gesis_metadata_df.to_csv('../metadata/gesis.csv', index=False)

@@ -1,50 +1,50 @@
 import requests
-import json
 import pandas as pd
 
-# Define the base URL and query parameters
 base_url = "https://zenodo.org/api/records"
-query = """type:(dataset OR software OR image OR video OR physicalobject OR datamanagementplan OR softwaremanagementplan OR softwaredocumentation) 
+#query = """type:(dataset OR software OR image OR video OR physicalobject OR datamanagementplan OR softwaremanagementplan OR softwaredocumentation) 
+#AND creators.affiliation:("University of Mannheim" OR "Mannheim University" OR "Universität Mannheim")"""
+query = """type:(dataset OR software OR image OR video) 
 AND creators.affiliation:("University of Mannheim" OR "Mannheim University" OR "Universität Mannheim")"""
-# type:(dataset OR software
 rows = 1000
 page = 1
-
-# Initialize a list to store all records
 all_records = []
 
-# Perform the initial API request
-params = {
-    'q': query,
-    'size': rows,
-    'page': page
-}
+# Initial request
+params = {'q': query, 'size': rows, 'page': page}
 response = requests.get(base_url, params=params)
 result = response.json()
-
-# Add the initial results to the records list
 all_records.extend(result['hits']['hits'])
 
-# Calculate the total number of pages
+# Pagination
 total_records = result['hits']['total']
 pages = total_records // rows + (1 if total_records % rows else 0)
 
-# Loop through the remaining pages (if any) and collect the records
 for page in range(2, pages + 1):
     params['page'] = page
     response = requests.get(base_url, params=params)
     result = response.json()
     all_records.extend(result['hits']['hits'])
 
-# Saving the results to a file
-with open('zenodo_records.json', 'w') as file:
-    json.dump(all_records, file, indent=4)
+# Extract detailed metadata
+records_list = []
+for rec in all_records:
+    meta = rec['metadata']
+    creators = ', '.join([creator['name'] for creator in meta.get('creators', [])])
+    record_data = {
+        'DOI': rec.get('doi', ''),
+        'Title': meta.get('title', ''),
+        'Publication Date': meta.get('publication_date', ''),
+        'Description': meta.get('description', '').replace('\n', ' ').replace('<p>', '').replace('</p>', ''),
+        'Creators': creators,
+        'Type': meta.get('resource_type', {}).get('type', ''),
+        'License': meta.get('license', {}).get('id', ''),
+        'URL': rec['links'].get('self_html', '')
+    }
+    records_list.append(record_data)
 
-print(f"Total records retrieved: {len(all_records)}")
+# Save to CSV
+df = pd.DataFrame(records_list)
+df.to_csv('../metadata/zenodo.csv', index=False)
 
-a = []
-for v in all_records:
-    a.append([v['doi'], v['metadata']['creators']])
-adf = pd.DataFrame(a)
-
-adf.to_csv('../metadata/zenodo.csv', index=False)
+print(f"Total records retrieved and saved: {len(records_list)}")
