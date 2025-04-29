@@ -1,6 +1,5 @@
 matplotlib==3.8.4
 pandas==2.2.3
-pdftotext==3.0.0
 plotly==5.9.0
 requests==2.32.3
 sickle==0.7.0
