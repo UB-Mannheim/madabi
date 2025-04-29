@@ -8,7 +8,7 @@ import os
 
 # ---------- Configuration ----------
 DATA_PATH = '../metadata/unified_mannheim_metadata.csv'
-OUTPUT_DIR = '../doc'
+OUTPUT_DIR = '../docs'
 WORDCLOUD_IMG = os.path.join(OUTPUT_DIR, 'title_wordcloud.png')
 HTML_OUTPUT = os.path.join(OUTPUT_DIR, 'index.html')
 
