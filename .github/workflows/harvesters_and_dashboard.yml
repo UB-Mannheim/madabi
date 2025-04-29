@@ -33,4 +33,5 @@ jobs:
           python merge_metadata.py
           python create_dashboard.py
 
-
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
