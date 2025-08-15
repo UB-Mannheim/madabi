@@ -31,6 +31,7 @@ jobs:
           python madata.py
           python harvard_dataverse.py
           python merge_metadata.py
+          python cleaning_metadata.py
           python create_dashboard.py
 
       - name: Commit changes
