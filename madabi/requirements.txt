@@ -6,3 +6,5 @@ sickle==0.7.0
 tqdm==4.66.5
 wordcloud==1.9.3
 numpy==1.24.4
+beautifulsoup4==4.13.5
+html==1.16
