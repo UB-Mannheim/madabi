@@ -64,7 +64,8 @@ with tqdm(total=total, desc="⏳ Harvesting", unit="dataset") as pbar:
                 'Published At': item.get('published_at'),
                 'Source': 'Harvard Dataverse',
                 'Authors': '; '.join(item.get('authors', [])),
-                'License': license_info
+                'License': license_info,
+                'type': item.get('type')
             })
 
             pbar.update(1)

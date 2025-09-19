@@ -65,7 +65,8 @@ gesis_df_selected = pd.DataFrame({
     'Description': gesis_df['metadata.dc.description'],
     'DOI': gesis_df['metadata.dc.identifier'],
     'Source': 'GESIS',
-    'Year': gesis_df['Year']
+    'Year': gesis_df['Year'],
+    'Type': gesis_df['type']
 })
 
 zenodo_df_selected = pd.DataFrame({
@@ -77,7 +78,8 @@ zenodo_df_selected = pd.DataFrame({
     'DOI': zenodo_df['DOI'],
     'Source': 'Zenodo',
     'Year': zenodo_df['Year'],
-    'License': zenodo_df['License']
+    'License': zenodo_df['License'],
+    'Type': zenodo_df['type']
 })
 
 madata_df_selected = pd.DataFrame({
@@ -94,7 +96,8 @@ madata_df_selected = pd.DataFrame({
     'DOI': madata_df['raw_metadata'].apply(lambda x: ', '.join(x.get('relation', []))),
     'Source': 'MADATA',
     'Year': madata_df['Year'],
-    'License': madata_df['rights']
+    'License': madata_df['rights'],
+    'Type': madata_df['type']
 })
 
 harvard_df_selected = pd.DataFrame({
@@ -106,7 +109,8 @@ harvard_df_selected = pd.DataFrame({
     'DOI': harvard_df['DOI'],
     'Source': 'Harvard Dataverse',
     'Year': harvard_df['Year'],
-    'License': harvard_df['License']
+    'License': harvard_df['License'],
+    'Type': harvard_df['type']
 })
 
 # Merge all into unified dataframe

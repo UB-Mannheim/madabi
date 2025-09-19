@@ -128,4 +128,5 @@ def extract_year_from_identifier(identifier):
 tqdm.pandas()
 gesis_metadata_df['Year'] = gesis_metadata_df['header.identifier'].progress_apply(extract_year_from_identifier)
 gesis_metadata_df['Year'] = gesis_metadata_df['Year'].fillna(gesis_metadata_df['header.datestamp'])
+gesis_metadata_df = gesis_metadata_df.rename(columns={"metadata.dc.type": "type"})
 gesis_metadata_df.to_csv('../metadata/gesis.csv', index=False)

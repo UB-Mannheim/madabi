@@ -37,7 +37,7 @@ for rec in all_records:
         'Publication Date': meta.get('publication_date', ''),
         'Description': meta.get('description', '').replace('\n', ' ').replace('<p>', '').replace('</p>', ''),
         'Creators': creators,
-        'Type': meta.get('resource_type', {}).get('type', ''),
+        'type': meta.get('resource_type', {}).get('type', ''),
         'License': meta.get('license', {}).get('id', ''),
         'URL': rec['links'].get('self_html', '')
     }
