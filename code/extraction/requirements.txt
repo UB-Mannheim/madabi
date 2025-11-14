@@ -1,0 +1,7 @@
+pandas>=2.1
+requests>=2.31
+tqdm>=4.66
+sentence-transformers>=2.5
+faiss-cpu>=1.7.4
+pdftotext>=2.2
+langchain>=0.1.0
