@@ -21,15 +21,15 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r madabi/requirements.txt
+          pip install -r code/requirements.txt
 
       - name: Run harvesters and dashboard creation
         run: |
-          cd madabi
-          python gesis.py
-          python zenodo.py
-          python madata.py
-          python harvard_dataverse.py
+          cd code
+          python harvester/gesis.py
+          python harvester/zenodo.py
+          python harvester/madata.py
+          python harvester/harvard_dataverse.py
           python merge_metadata.py
           python cleaning_metadata.py
           python create_dashboard.py
