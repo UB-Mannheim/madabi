@@ -128,3 +128,25 @@ Repositories and portals:
 ## Harvested Metadata
 
 See folder `./data/`.
+
+## LLM-based metadata extraction
+
+To enrich the harvested metadata with information contained only inside full texts (data availability statements, funding notes, dataset citations, etc.), we provide an LLM-powered extraction pipeline in `code/extraction/`. The workflow is:
+
+1. Run `python code/extraction/download_madoc_papers.py` to fetch open-access MADOC PDFs listed in `data/madoc.csv` into `data/pdf/`.
+2. Run either `python code/extraction/extract_metadata.py` (full template) or `python code/extraction/extract_metadata_reduced.py` (lean template) to build FAISS indices over the PDFs, query a local Ollama model, and write CSV/JSON outputs to `data/from_papers/`.
+
+Dependencies for these scripts live in `code/extraction/requirements.txt`, and additional details plus tooling requirements are documented in `code/extraction/README.md`.
+
+## Retrieval-augmented search prototype
+
+The `code/rag/` folder contains a prototype “GraphRAG” pipeline (`rag_madata.py`) that harvests MADATA via OAI-PMH, normalizes Dublin Core fields, creates TF‑IDF + sentence-transformer indices, wires relationship graphs (authors, subjects, DOIs), and answers natural-language questions with graph-aware retrieval. Typical usage:
+
+```bash
+python code/rag/rag_madata.py harvest --out data/madata_harvest.json
+python code/rag/rag_madata.py query \
+  --results data/madata_harvest.json \
+  --question "Datasets from Professor Alpers since 2018"
+```
+
+The script can optionally call a local Ollama model (`--ollama`) to summarize results. See `code/rag/README.md` for setup instructions and more examples, and `code/rag/requirements.txt` for its dependency set.
