@@ -127,4 +127,4 @@ Repositories and portals:
 
 ## Harvested Metadata
 
-See folder `./metadata/`.
+See folder `./data/`.
