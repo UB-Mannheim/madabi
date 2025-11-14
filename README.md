@@ -150,3 +150,7 @@ python code/rag/rag_madata.py query \
 ```
 
 The script can optionally call a local Ollama model (`--ollama`) to summarize results. See `code/rag/README.md` for setup instructions and more examples, and `code/rag/requirements.txt` for its dependency set.
+
+## License
+
+All scripts in this repo are licensed under the MIT license. The metadata records are licensed under the CC0 license if not otherwise stated. Everything else in this repo is licensed under the Creative Commons Attribution 4.0 International license.
