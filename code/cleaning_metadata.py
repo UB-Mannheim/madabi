@@ -15,6 +15,7 @@ _RE_MD_HEADINGS   = re.compile(r"(?m)^\s*#{1,6}\s*")
 _RE_MD_EMPH       = re.compile(r"[*_~`]+")
 _RE_WS            = re.compile(r"\s+")
 _RE_LISTY_STR     = re.compile(r"^\s*\[\s*['\"]")
+_RE_DOI           = re.compile(r"(10\.\d{4,9}/\S+)", re.IGNORECASE)
 _MAX_LEN_DEFAULT  = 10000
 
 _MISSING_TOKEN = "NA"
@@ -114,9 +115,34 @@ def clean_title(text) -> str:
 
     return s
 
+def clean_doi(value) -> str:
+    """Cleaning for 'DOI'"""
+    # Treat None/NaN as missing
+    if value is None or pd.isna(value):
+        return _MISSING_TOKEN
+
+    s = str(value).strip()
+    if not s:
+        return _MISSING_TOKEN
+
+    match = _RE_DOI.search(s)
+    if not match:
+        return _MISSING_TOKEN
+
+    doi = match.group(1)
+
+    # Remove unwanted trailing characters
+    doi = doi.rstrip("',;:\" ")
+
+    if not doi:
+        return _MISSING_TOKEN
+
+    return doi
+
 # Apply cleaning functions
 metadata_df["Description"] = metadata_df["Description"].apply(clean_description)
 metadata_df["Title"] = metadata_df["Title"].apply(clean_title)
+metadata_df["DOI"] = metadata_df["DOI"].apply(clean_doi)
 
 # Ensure NA is consistent
 metadata_df["Description"] = metadata_df["Description"].fillna(_MISSING_TOKEN)
