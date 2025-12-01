@@ -9,7 +9,7 @@ query = (
     'AND creators.affiliation:("University of Mannheim" OR "Mannheim University" OR "Universität Mannheim")'
 )
 
-rows = 100  # IMPORTANT: Zenodo limit is 100
+rows = 25  # IMPORTANT: Zenodo limit is 100
 params = {"q": query, "size": rows}
 
 all_records = []
