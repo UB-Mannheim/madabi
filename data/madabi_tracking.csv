@@ -1,0 +1,9 @@
+source;month;t;dataset;intersection;total;intersection_perc
+GESIS;FEB_2026;0;529;9;1079;0.8
+Harvard Dataverse;FEB_2026;0;229;9;1079;0.8
+MADATA;FEB_2026;0;195;9;1079;0.8
+Zenodo;FEB_2026;0;126;9;1079;0.8
+GESIS;MAR_2026;1;538;76;1164;6.5
+Harvard Dataverse;MAR_2026;1;233;76;1164;6.5
+MADATA;MAR_2026;1;266;76;1164;6.5
+Zenodo;MAR_2026;1;127;76;1164;6.5
