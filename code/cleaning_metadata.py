@@ -164,8 +164,8 @@ desired_order = [
     "Type",
     "Title",
     "Creators",
-    "Affiliations",
     "Description",
+    "Affiliations",    
     "Year",
     "License"
 ]
@@ -176,6 +176,20 @@ metadata_df = metadata_df[existing_order + remaining_cols]
 
 # Ensure NA is consistent
 metadata_df["Description"] = metadata_df["Description"].fillna(_MISSING_TOKEN)
+
+# Add cols
+metadata_df.insert(len(metadata_df.columns), "Anmerkungen", "")
+metadata_df.insert(len(metadata_df.columns), "Projekt", "")
+metadata_df.insert(len(metadata_df.columns), "Längsschnittstudie", "")
+metadata_df.insert(0, "Status", "")
+metadata_df.insert(1, "MADATA-ID", "")
+
+# Delet col
+metadata_df = metadata_df.drop(columns=["Date"])
+
+# Delet MADATA metadata
+metadata_df = metadata_df[~metadata_df["Source"].str.contains(r"\bMADATA\b", case=False, na=False)]
+
 
 # Save to CSV
 metadata_df.to_csv('../data/unified_mannheim_metadata_cleaned.csv', index=False)
@@ -201,6 +215,5 @@ for row_idx in range(2, ws.max_row + 1):  # row 1 = header
         cell.font = link_font
 
 wb.save(excel_path)
-
 
 print("Cleaned unified metadata saved to ../data/unified_mannheim_metadata_cleaned.csv")

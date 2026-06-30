@@ -10,7 +10,21 @@ harvard_df = pd.read_csv('../data/harvard_dataverse.csv')
 # Standardize date columns explicitly
 gesis_df['Year'] = gesis_df['Year'].apply(lambda x: pd.to_datetime(x, errors='coerce', dayfirst=True).year)
 madata_df['raw_metadata'] = madata_df['raw_metadata'].apply(eval)
-madata_df['Year'] = madata_df['raw_metadata'].apply(lambda x: x.get('date')[0:4])
+def _year_from_raw_metadata(x):
+    if not isinstance(x, dict):
+        return pd.NA
+    d = x.get('date')
+    if d is None:
+        return pd.NA
+    # Handle list-like dates defensively
+    if isinstance(d, list):
+        d = d[0] if len(d) > 0 else None
+    if d is None:
+        return pd.NA
+    s = str(d).strip()
+    return s[:4] if len(s) >= 4 else pd.NA
+
+madata_df['Year'] = madata_df['raw_metadata'].apply(_year_from_raw_metadata)
 zenodo_df['Year'] = pd.to_datetime(zenodo_df['Publication Date'], errors='coerce').dt.year
 harvard_df['Year'] = pd.to_datetime(harvard_df['Published At'], errors='coerce').dt.year
 

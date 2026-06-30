@@ -20,20 +20,20 @@ params = {
 }
 
 all_datasets = []
-print("🔍 Starting metadata harvest from Harvard Dataverse...")
+print("Starting metadata harvest from Harvard Dataverse...")
 
 # Step 1: First request to get total count
 first_response = requests.get(search_url, params=params)
 first_response.raise_for_status()
 first_data = first_response.json()['data']
 total = first_data['total_count']
-print(f"📦 Total datasets to harvest: {total}")
+print(f"Total datasets to harvest: {total}")
 
 # Reset for iteration
 params['start'] = 0
 
 # Step 2: Iterate with tqdm progress bar
-with tqdm(total=total, desc="⏳ Harvesting", unit="dataset") as pbar:
+with tqdm(total=total, desc="Harvesting", unit="dataset") as pbar:
     while True:
         response = requests.get(search_url, params=params)
         response.raise_for_status()
@@ -54,7 +54,7 @@ with tqdm(total=total, desc="⏳ Harvesting", unit="dataset") as pbar:
                 metadata_json = meta_response.json()
                 license_info = metadata_json['data'].get('schema:license', 'N/A')
             except Exception as e:
-                print(f"⚠️ License lookup failed for {doi}: {e}")
+                print(f"License lookup failed for {doi}: {e}")
 
             all_datasets.append({
                 'Title': item.get('name'),
@@ -76,4 +76,4 @@ with tqdm(total=total, desc="⏳ Harvesting", unit="dataset") as pbar:
 # Save to CSV
 df = pd.DataFrame(all_datasets)
 df.to_csv('../data/harvard_dataverse.csv', index=False)
-print(f"\n✅ Done! {len(df)} datasets saved to ../data/harvard_dataverse.csv")
+print(f"\nDone! {len(df)} datasets saved to ../data/harvard_dataverse.csv")
