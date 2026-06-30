@@ -2,6 +2,7 @@ from sickle import Sickle
 import xml.etree.ElementTree as ET
 from tqdm import tqdm
 import pandas as pd
+from pathlib import Path
 
 # Initialize Sickle
 sickle = Sickle('https://madoc.bib.uni-mannheim.de/cgi/oai2')
@@ -80,5 +81,10 @@ for creators in metadata_df.creators:
         creator_dict[creator.get('creator_name')] = creator.get('name_identifier')
 
 
-metadata_df.to_csv('../data/madoc.csv', index=False)
+BASE_DIR = Path(__file__).resolve().parents[2]
+DATA_DIR = BASE_DIR / "data"
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+out_path = DATA_DIR / "madoc.csv"
+metadata_df.to_csv(out_path, index=False)
+print(f"Wrote {len(metadata_df)} rows to {out_path}")
 
