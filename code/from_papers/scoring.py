@@ -457,8 +457,11 @@ def score_record(contributors, paper_years: set, ctx: Context, citing_papers=Non
         return f'a Mannheim paper that links to it ("{titles[0]}"{extra}, {paper_years_str})'
 
     if ok_people:
-        score, evidence = 1.0, "employee_match_tenure_ok"
         is_orcid, how = match_phrase(ok_people)
+        # ORCID match within employment is the strongest signal (1.0); a name-only match is less
+        # certain (possible namesakes) even when the timing fits, so it scores 0.8.
+        score = 1.0 if is_orcid else 0.8
+        evidence = "employee_match_tenure_ok"
         verdict = "Very likely Mannheim" if is_orcid else "Likely Mannheim - verify (name match)"
         why = (
             f"Confirmed Mannheim staff: {join_names(tenure_ok_names)} ({how}). "
@@ -466,7 +469,7 @@ def score_record(contributors, paper_years: set, ctx: Context, citing_papers=Non
             f"recorded Mannheim employment - so they were at Mannheim when this work came out."
         )
     elif fail_people:
-        score, evidence = 0.8, "employee_match_tenure_mismatch"
+        score, evidence = 0.5, "employee_match_tenure_mismatch"
         is_orcid, how = match_phrase(fail_people)
         verdict = "Possibly Mannheim - verify (timing mismatch)"
         windows = fmt_windows([w for p in fail_people for w in p["windows"]])
@@ -476,7 +479,7 @@ def score_record(contributors, paper_years: set, ctx: Context, citing_papers=Non
             f"The dataset may pre- or post-date their time here - please verify."
         )
     elif noyear_people:
-        score, evidence = 0.8, "employee_match_paper_year_unknown"
+        score, evidence = 0.5, "employee_match_paper_year_unknown"
         is_orcid, how = match_phrase(noyear_people)
         verdict = "Possibly Mannheim - verify (timing unknown)"
         why = (

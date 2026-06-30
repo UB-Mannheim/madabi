@@ -424,6 +424,15 @@ def _join_people_names(people: Any) -> str:
     return "; ".join(out)
 
 
+def _affiliation_from_verdict(verdict: str) -> str:
+    """Affiliations is kept consistent with the Verdict: any Mannheim verdict (ORCID/name
+    match or profile mention) yields "Universität Mannheim"; "No Mannheim evidence found"
+    (or empty) yields "". This makes the column reflect the actual match, not only whether
+    a contributor's OSF profile happened to mention Mannheim."""
+    v = (verdict or "").strip().lower()
+    return "Universität Mannheim" if v and not v.startswith("no mannheim") else ""
+
+
 def build_osf_rows(emp_orcid_to_names: dict[str, list[str]], f2cit, f2link, f2doi) -> list[dict[str, str]]:
     rows = read_csv_rows(SCORED_OSF)
     # De-dup by OSF id (same id can appear under multiple URL variants); prefer the row with a DOI.
@@ -460,8 +469,8 @@ def build_osf_rows(emp_orcid_to_names: dict[str, list[str]], f2cit, f2link, f2do
         if isinstance(block, dict):
             creators = _join_people_names(block.get("people"))
 
-        any_profile = scored_col(r, "osf_profile_mentions_mannheim", "any_mannheim_profile_match").lower() in {"true", "t", "1", "yes", "y"}
-        affiliations = "Universität Mannheim" if any_profile else ""
+        verdict = scored_col(r, "verdict")
+        affiliations = _affiliation_from_verdict(verdict)
 
         dates = resource.get("dates") if isinstance(resource.get("dates"), dict) else {}
         date_str = (
@@ -489,7 +498,7 @@ def build_osf_rows(emp_orcid_to_names: dict[str, list[str]], f2cit, f2link, f2do
                 "Date": date_str,
                 "Provenance": provenance,
                 "Confidence": scored_col(r, "unima_confidence_score", "score"),
-                "Verdict": scored_col(r, "verdict"),
+                "Verdict": verdict,
                 "Confidence_Evidence": _osf_confidence_evidence(r, obj if isinstance(obj, dict) else {}, emp_orcid_to_names),
             }
         )
@@ -544,7 +553,7 @@ def _figshare_confidence_fallback(article: dict[str, Any], emp_orcid_to_names, e
     if orcid_hits:
         return "1.0", "Very likely Mannheim", "ORCID match to Uni Mannheim employee list: " + "; ".join(orcid_hits)
     if name_hits:
-        return "0.7", "Likely Mannheim - verify (name match)", "Author name match to Uni Mannheim employee list: " + "; ".join(sorted(set(name_hits)))
+        return "0.8", "Likely Mannheim - verify (name match)", "Author name match to Uni Mannheim employee list: " + "; ".join(sorted(set(name_hits)))
     return "0.0", "No Mannheim evidence found", "Match evidence: no_employee_match"
 
 
@@ -600,7 +609,7 @@ def build_figshare_rows(emp_orcid_to_names, emp_names_norm, f2cit, f2link) -> li
                 "Type": _figshare_type(article),
                 "Title": title,
                 "Creators": creators,
-                "Affiliations": "",
+                "Affiliations": _affiliation_from_verdict(verdict),
                 "Description": strip_html(as_str(article.get("description"))),
                 "Year": year_from_iso(published),
                 "License": license_str,
