@@ -5,8 +5,6 @@ pandas>=2.2.0; python_version >= "3.13"
 plotly==5.9.0
 requests>=2.32.4
 sickle==0.7.0
-# Sickle needs lxml.etree; pin a version with wheels for current Pythons (e.g. 3.14).
-lxml>=6.1.0
 tqdm==4.66.5
 wordcloud==1.9.3
 numpy==1.24.4; python_version < "3.13"
