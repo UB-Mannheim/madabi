@@ -129,14 +129,25 @@ Repositories and portals:
 
 See folder `./data/`.
 
-## LLM-based metadata extraction
+## Building the datagraphy with AI (metadata extraction)
 
-To enrich the harvested metadata with information contained only inside full texts (data availability statements, funding notes, dataset citations, etc.), we provide an LLM-powered extraction pipeline in `code/extraction/`. The workflow is:
+Much of the data produced by University of Mannheim authors is only discoverable *inside* their publications — in data-availability statements, supplementary materials, and citations. We mine MADOC full texts with an LLM-based pipeline, recover the data/code links, harvest metadata for each, attribute it to Mannheim authors, and assemble a unified **datagraphy**.
 
-1. Run `python code/extraction/download_madoc_papers.py` to fetch open-access MADOC PDFs listed in `data/madoc.csv` into `data/pdf/`.
-2. Run either `python code/extraction/extract_metadata.py` (full template) or `python code/extraction/extract_metadata_reduced.py` (lean template) to build FAISS indices over the PDFs, query a local Ollama model, and write CSV/JSON outputs to `data/from_papers/`.
+**Extraction** (`code/extraction/`):
 
-Dependencies for these scripts live in `code/extraction/requirements.txt`, and additional details plus tooling requirements are documented in `code/extraction/README.md`.
+1. `python code/harvester/madoc.py` → `data/madoc.csv`, then `python code/extraction/fetch_madoc_ubma_flags.py` to add UB EPrints flags → `data/madoc_with_ubma.csv`.
+2. `python code/extraction/download_madoc_papers.py` downloads the open-access PDFs into `data/pdf/` (`download_missing_pdfs.py` handles long filenames).
+3. Extract structured metadata via RAG (FAISS + sentence-transformers) and an LLM — `extract_metadata_api.py` (hosted API: MaIA / GWDG, current default) or the local-Ollama `extract_metadata.py` / `extract_metadata_reduced.py`. Outputs land in `data/from_papers/`.
+
+**Datagraphy assembly** (`code/` + `code/from_papers/`):
+
+- Repository-link discovery from the extraction output (`notebooks/analyze_repository_links_from_papers.ipynb`).
+- Per-source metadata harvesters: `run_osf_metadata.py`, `run_figshare_metadata.py`, `run_somef_github.py` + `run_github_contributors.py`.
+- Provenance, Mannheim-affiliation scoring, and unification: `build_paper_lookup_from_madoc.py` → `scoring.py` → `build_unified_metadata.py`.
+
+📖 **Full walkthrough, pipeline diagram, and reproduce commands: [docs/building_datagraphy_with_ai.md](docs/building_datagraphy_with_ai.md).**
+
+Dependencies for the extraction scripts live in `code/extraction/requirements.txt`; see `code/extraction/README.md` for tooling notes. Note: full texts, the employee list, and personal-data outputs are git-ignored (see `.gitignore`).
 
 ## Retrieval-augmented search prototype
 

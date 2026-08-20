@@ -1,7 +1,11 @@
 pandas>=2.1
 requests>=2.31
-tqdm>=4.66
+tqdm>=4.68.4
 sentence-transformers>=2.5
 faiss-cpu>=1.7.4
-pdftotext>=2.2
+pymupdf>=1.24.0
+# pdftotext needs poppler + MSVC on Windows; extract_metadata_api.py uses PyMuPDF if missing.
+# pdftotext>=2.2
 langchain>=0.1.0
+langchain-text-splitters>=0.3.0
+python-dotenv>=1.0.0

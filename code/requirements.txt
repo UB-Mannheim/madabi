@@ -1,10 +1,16 @@
 matplotlib==3.8.4
-pandas==2.2.3
-plotly==5.9.0
+# NumPy 1.x has no wheels for Python 3.13+; use 2.x / pandas 3.x there.
+pandas==2.2.3; python_version < "3.13"
+pandas>=2.2.0; python_version >= "3.13"
+plotly==6.8.0
 requests>=2.32.4
 sickle==0.7.0
-tqdm==4.66.5
+tqdm==4.68.4
 wordcloud==1.9.3
-numpy==1.24.4
+numpy==1.24.4; python_version < "3.13"
+numpy>=2.5.1; python_version >= "3.13"
 beautifulsoup4==4.13.5
 openpyxl==3.1.5
+# SOMEF (see code/run_somef_github.py). 0.9+ needs Python 3.10+; 0.8.x works on 3.9.
+# somef==0.8.2; python_version < "3.10"
+# somef>=0.9.13; python_version >= "3.10"
