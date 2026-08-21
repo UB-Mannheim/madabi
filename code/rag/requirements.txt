@@ -1,5 +1,5 @@
 numpy>=2.5.1
-networkx>=3.1
+networkx>=3.6.1
 scikit-learn>=1.9.0
 sentence-transformers>=2.5
 faiss-cpu>=1.7.4
