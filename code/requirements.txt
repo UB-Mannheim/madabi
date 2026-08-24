@@ -1,4 +1,4 @@
-matplotlib==3.8.4
+matplotlib==3.11.1
 # NumPy 1.x has no wheels for Python 3.13+; use 2.x / pandas 3.x there.
 pandas==2.2.3; python_version < "3.13"
 pandas>=2.2.0; python_version >= "3.13"
