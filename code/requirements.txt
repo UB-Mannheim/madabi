@@ -2,7 +2,7 @@ matplotlib==3.11.1
 # NumPy 1.x has no wheels for Python 3.13+; use 2.x / pandas 3.x there.
 pandas==2.2.3; python_version < "3.13"
 pandas>=3.0.5; python_version >= "3.13"
-plotly==6.9.0
+plotly==7.0.0
 requests>=2.32.4
 sickle==0.7.0
 tqdm==4.68.4
