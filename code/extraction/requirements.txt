@@ -1,6 +1,6 @@
 pandas>=3.0.5
 requests>=2.31
-tqdm>=4.68.4
+tqdm>=4.70.0
 sentence-transformers>=2.5
 faiss-cpu>=1.7.4
 pymupdf>=1.28.2
