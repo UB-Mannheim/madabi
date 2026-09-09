@@ -3,7 +3,7 @@ matplotlib==3.11.1
 pandas==2.2.3; python_version < "3.13"
 pandas>=3.0.5; python_version >= "3.13"
 plotly==6.9.0
-requests>=2.32.4
+requests>=2.34.2
 sickle==0.7.0
 tqdm==4.68.4
 wordcloud==1.9.3
