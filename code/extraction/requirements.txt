@@ -6,6 +6,6 @@ faiss-cpu>=1.7.4
 pymupdf>=1.28.2
 # pdftotext needs poppler + MSVC on Windows; extract_metadata_api.py uses PyMuPDF if missing.
 # pdftotext>=2.2
-langchain>=0.1.0
+langchain>=1.4.0
 langchain-text-splitters>=1.1.2
 python-dotenv>=1.2.3
