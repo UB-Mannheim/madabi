@@ -1,7 +1,7 @@
 numpy>=2.5.3
 networkx>=3.6.1
 scikit-learn>=1.9.0
-sentence-transformers>=6.0.1
+sentence-transformers>=6.1.0
 faiss-cpu>=1.15.0
 sickle>=0.7.0
 tqdm>=4.70.0
