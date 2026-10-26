@@ -5,7 +5,7 @@ pandas>=3.0.5; python_version >= "3.13"
 plotly==7.1.0
 requests>=2.34.2
 sickle==0.7.0
-tqdm==4.70.0
+tqdm==4.70.1
 wordcloud==1.9.6
 numpy==1.24.4; python_version < "3.13"
 numpy>=2.5.3; python_version >= "3.13"
