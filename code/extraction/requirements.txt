@@ -8,4 +8,4 @@ pymupdf>=1.28.2
 # pdftotext>=2.2
 langchain>=1.4.0
 langchain-text-splitters>=1.1.2
-python-dotenv>=1.2.3
+python-dotenv>=1.2.4
